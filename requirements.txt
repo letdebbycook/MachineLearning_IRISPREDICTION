@@ -2,4 +2,3 @@ flask
 numpy
 joblib
 scikit-learn
-gunicorn
