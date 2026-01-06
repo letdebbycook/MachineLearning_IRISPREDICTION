@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KELOMPOK 2 | IRIS PREDICTION</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/flower.png') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-hover: #5a52d5;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #2d3436;
+            --text-secondary: #636e72;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #FF9A9E, #FECFEF);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            animation: slideUp 0.6s ease both;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        h2 span { color: var(--primary); }
+
+        .helper-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: rgba(255,255,255,0.6);
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--primary);
+        }
+
+        label {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            color: var(--text-secondary);
+            pointer-events: none;
+            transition: .3s;
+        }
+
+        input:focus ~ label,
+        input:not(:placeholder-shown) ~ label {
+            top: 0;
+            background: var(--glass-bg);
+            padding: 0 5px;
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button:hover { background: var(--primary-hover); }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,0.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.95);
+            border-left: 5px solid var(--primary);
+            animation: popIn .5s ease;
+            text-align: center;
+        }
+
+        .badge {
+            margin: 10px 0;
+            padding: 8px 18px;
+            background: rgba(108,99,255,.15);
+            border-radius: 50px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .result img {
+            width: 100%;
+            max-height: 230px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metric-card {
+            flex: 1;
+            padding: 15px;
+            background: rgba(108,99,255,.08);
+            border-radius: 14px;
+        }
+
+        .metric-card span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .metric-card strong {
+            display: block;
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .footer {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(40px);} to {opacity:1;} }
+        @keyframes popIn { from {opacity:0; transform:scale(.9);} to {opacity:1;} }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2>🌸 Iris <span>Predictor</span></h2>
+    <p class="helper-text">Decision Tree Classifier untuk klasifikasi spesies bunga Iris</p>
+
+     <div class="result">
+        <h3>Model Evaluation</h3>
+        <div class="metrics">
+            <div class="metric-card">
+                <span>Akurasi Testing</span>
+                <strong>96.67%</strong>
+            </div>
+        </div>
+            <p class="description" style="margin-top:15px; text-align:center;">
+            Akurasi training menunjukkan kemampuan model mempelajari data.
+        </p>
+    </div>
+
+    <div class="section-title">Input Parameter</div>
+
+    <form method="POST" id="predictionForm">
+        <div class="input-group">
+            <input type="number" step="any" name="sepal_length" placeholder=" " required>
+            <label>Sepal Length (cm)</label>
+        </div>
+        <div class="input-group">
+            <input type="number" step="any" name="sepal_width" placeholder=" " required>
+            <label>Sepal Width (cm)</label>
+        </div>
+        <div class="input-group">
+            <input type="number" step="any" name="petal_length" placeholder=" " required>
+            <label>Petal Length (cm)</label>
+        </div>
+        <div class="input-group">
+            <input type="number" step="any" name="petal_width" placeholder=" " required>
+            <label>Petal Width (cm)</label>
+        </div>
+
+        <button type="submit" id="submitBtn">
+            <span class="spinner"></span>
+            <span class="btn-text">Analyze Flower</span>
+        </button>
+    </form>
+
+    {% if prediction %}
+    <div class="result" id="resultCard">
+        <h3>Predicted Iris Species</h3>
+        <div class="badge">{{ prediction }}</div>
+        <img src="{{ url_for('static', filename='images/' + image) }}">
+        <div class="description">{{ description }}</div>
+    </div>
+
+    <script>
+        document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
+    </script>
+    {% endif %}
+
+    <div class="footer">
+        <strong>CREATED BY KELOMPOK 2</strong><br>
+        Debby Gusdi Ahkbar – 2311081008<br>
+        Fail Hylmi Khalil – 2311082013<br>
+        Latifa Keysha – 2311083019
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('predictionForm');
+    const btn = document.getElementById('submitBtn');
+    const spinner = document.querySelector('.spinner');
+    const btnText = document.querySelector('.btn-text');
+
+    form.addEventListener('submit', () => {
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnText.textContent = 'Processing AI Model...';
+    });
+</script>
+</body>
+</html>
